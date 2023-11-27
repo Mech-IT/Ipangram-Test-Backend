@@ -17,14 +17,18 @@ router.get("/getUser", auth, async (req, res) => {
 
 router.post("/updateUser", auth, async (req, res) => {
     try {
-
+         
         if (req.user.role == "employee") {
-            delete req.body.jobPosition;
-            delete req.body.department
+            const user = await UserModel.findByIdAndUpdate(req.user.id, { firstName: req.body.firstName, lastName: req.body.lastName, location: req.body.location},{new:true})
+            return res.status(200).json({success:"Profile updated successfully.",user})
+        }else{
+            const user = await UserModel.findByIdAndUpdate(req.user.id, { firstName: req.body.firstName, lastName: req.body.lastName, location: req.body.location, jobPosition: req.body.jobPosition, department: req.body.department },{new:true})
+           
+            return res.status(200).json({success:"Profile updated successfully.",user})
         }
 
-        const user = await UserModel.findByIdAndUpdate(req.body._id,{...req.body},{new:true})
-        return res.status(200).json({success:"Profile updated successfully.",user})
+        
+        
 
     } catch (error) {
         console.log("error", error);
